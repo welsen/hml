@@ -6,4 +6,6 @@ var EHMLError = {
 	ACCESS_DENIED: 1 << 4
 };
 
-module.exports = EHMLError;
+try {
+	module.exports = EHMLError;
+} catch(err) {}

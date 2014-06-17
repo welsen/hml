@@ -22,6 +22,7 @@ var Configure = function (app, session) {
 	app.use(express.static(path.join(__dirname, '..', 'public')));
 
 	app.use('/jquery', express.static(path.join(__dirname, '..', 'node_modules', 'jquery', 'dist')));
+	app.use('/enums', express.static(path.join(__dirname, 'enums')));
 
 	app.use(session({
 		secret: MD5("HML-2014/06/13").toString(),

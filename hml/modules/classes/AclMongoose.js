@@ -1,4 +1,4 @@
-var Acl = function (mongoose, usermodel) {
+var AclMongoose = function AclMongoose(mongoose, usermodel) {
     'use strict';
 	var Fiber = require('fibers');
 	var tree = require('mongoose-tree');
@@ -14,32 +14,18 @@ var Acl = function (mongoose, usermodel) {
 	var AclPermissionSchema = require('../schemas/AclPermissionSchema')(mongoose);
 	var AclPermission = mongoose.model('AclPermission', AclPermissionSchema);
 
-	var AclRolePermissionSchema = new Schema({
-		roleId: ObjectId,
-		permissionId: ObjectId,
-		created: Number,
-		modified: Number,
-		active: Boolean
-	});
-	AclRolePermissionSchema.index({roleId: 1, permissionId: 1}, {unique:true});
+	var AclRolePermissionSchema = require('../schemas/AclRolePermissionSchema')(mongoose);
 	var AclRolePermission = mongoose.model('AclRolePermission', AclRolePermissionSchema);
 
-	var AclUserRoleSchema = new Schema({
-		userId: ObjectId,
-		roleId: ObjectId,
-		created: Number,
-		modified: Number,
-		active: Boolean
-	});
-	AclUserRoleSchema.index({userId: 1, roleId: 1}, {unique:true});
+	var AclUserRoleSchema = require('../schemas/AclUserRoleSchema')(mongoose);
 	var AclUserRole = mongoose.model('AclUserRole', AclUserRoleSchema);
 
 	var User = usermodel;
 
-    function Acl() {
+    function AclMongoose() {
     }
 
-    Acl.prototype.AddRole = function (name, desc, parent, deletable, callback) {
+    AclMongoose.prototype.AddRole = function (name, desc, parent, deletable, callback) {
         var now = (new Date()).getTime();
 
         var role = new AclRole({
@@ -80,7 +66,7 @@ var Acl = function (mongoose, usermodel) {
         }
     };
 
-    Acl.prototype.UpdateRole = function (id, desc, callback) {
+    AclMongoose.prototype.UpdateRole = function (id, desc, callback) {
         var now = (new Date()).getTime();
 
         AclRole.findOneAndUpdate({ _id: id }, { $set: { description: desc, modified: now } }, function (err) {
@@ -89,13 +75,13 @@ var Acl = function (mongoose, usermodel) {
         });
     };
 
-    Acl.prototype.DeleteRole = function (id, callback) {
+    AclMongoose.prototype.DeleteRole = function (id, callback) {
         AclRole.remove({ _id: id }).exec();
         AclRole.remove({ parent: id }).exec();
         callback();
     };
 
-    Acl.prototype.GetRolesUnderByName = function (name, callback) {
+    AclMongoose.prototype.GetRolesUnderByName = function (name, callback) {
         var outRoles = [];
         AclRole.findOne({ name: name }, function (err, role) {
             if (err) logger.error(err);
@@ -116,7 +102,7 @@ var Acl = function (mongoose, usermodel) {
         });
     };
 
-    Acl.prototype.GetRolesUnderById = function (role, callback) {
+    AclMongoose.prototype.GetRolesUnderById = function (role, callback) {
         var outRoles = [];
         AclRole.findOne({ _id: role }, function (err, role) {
             if (err) logger.error(err);
@@ -136,7 +122,7 @@ var Acl = function (mongoose, usermodel) {
         });
     };
 
-    Acl.prototype.GetRoles = function (callback) {
+    AclMongoose.prototype.GetRoles = function (callback) {
         var outRoles = [];
         AclRole.findOne({ name: 'root' }, function (err, role) {
             if (err) logger.error(err);
@@ -155,7 +141,7 @@ var Acl = function (mongoose, usermodel) {
         });
     };
 
-    Acl.prototype.AddPermission = function (name, desc, parent, deletable, callback) {
+    AclMongoose.prototype.AddPermission = function (name, desc, parent, deletable, callback) {
         var now = (new Date()).getTime();
 
         var permission = new AclPermission({
@@ -193,7 +179,7 @@ var Acl = function (mongoose, usermodel) {
         }
     };
 
-    Acl.prototype.UpdatePermission = function (id, desc, callback) {
+    AclMongoose.prototype.UpdatePermission = function (id, desc, callback) {
         var now = (new Date()).getTime();
 
         AclPermission.findOneAndUpdate({ _id: id }, { $set: { description: desc, modified: now } }, function (err) {
@@ -202,13 +188,13 @@ var Acl = function (mongoose, usermodel) {
         });
     };
 
-    Acl.prototype.DeletePermission = function (id, callback) {
+    AclMongoose.prototype.DeletePermission = function (id, callback) {
         AclPermission.remove({ _id: id }).exec();
         AclPermission.remove({ parent: id }).exec();
         callback();
     };
 
-    Acl.prototype.GetPermissionsUnderByName = function (name, callback) {
+    AclMongoose.prototype.GetPermissionsUnderByName = function (name, callback) {
         var outPermissions = [];
         AclPermission.findOne({ name: name }, function (err, permission) {
             if (err) logger.error(err);
@@ -228,7 +214,7 @@ var Acl = function (mongoose, usermodel) {
         });
     };
 
-    Acl.prototype.GetPermissionsUnderById = function (id, callback) {
+    AclMongoose.prototype.GetPermissionsUnderById = function (id, callback) {
         var outPermissions = [];
         AclPermission.findOne({ _id: id }, function (err, permission) {
             if (err) logger.error(err);
@@ -248,7 +234,7 @@ var Acl = function (mongoose, usermodel) {
         });
     };
 
-    Acl.prototype.GetPermissions = function (callback) {
+    AclMongoose.prototype.GetPermissions = function (callback) {
         var outPermissions = [];
         AclPermission.findOne({ name: 'all' }, function (err, permission) {
             if (err) logger.error(err);
@@ -268,7 +254,7 @@ var Acl = function (mongoose, usermodel) {
         });
     };
 
-    Acl.prototype.LinkPermissionRoleByName = function (permissionName, roleName, callback) {
+    AclMongoose.prototype.LinkPermissionRoleByName = function (permissionName, roleName, callback) {
         var now = (new Date()).getTime();
 
 		AclPermission.findOne({ name: permissionName }, function(err, permission) {
@@ -300,7 +286,7 @@ var Acl = function (mongoose, usermodel) {
 		});
     };
 
-    Acl.prototype.LinkPermissionRoleById = function (permissionId, roleId, callback) {
+    AclMongoose.prototype.LinkPermissionRoleById = function (permissionId, roleId, callback) {
         var now = (new Date()).getTime();
 
         var rolepermission = new AclRolePermission({
@@ -321,12 +307,12 @@ var Acl = function (mongoose, usermodel) {
 		});
     };
 
-    Acl.prototype.UnLinkPermissionRole = function (permissionId, roleId, callback) {
+    AclMongoose.prototype.UnLinkPermissionRole = function (permissionId, roleId, callback) {
 		AclRolePermission.remove({ roleId: roleId, permissionId: permissionId });
 		callback();
     };
 
-    Acl.prototype.LinkRoleUserByRoleName = function (roleName, userId, callback) {
+    AclMongoose.prototype.LinkRoleUserByRoleName = function (roleName, userId, callback) {
         var now = (new Date()).getTime();
 
 		AclRole.findOne({ name: roleName }, function(err, role) {
@@ -353,7 +339,7 @@ var Acl = function (mongoose, usermodel) {
 		});
     };
 
-    Acl.prototype.LinkRoleUserByName = function (roleName, userName, identifier, callback) {
+    AclMongoose.prototype.LinkRoleUserByName = function (roleName, userName, identifier, callback) {
         var now = (new Date()).getTime();
 
 		AclRole.findOne({ name: roleName }, function(err, role) {
@@ -386,7 +372,7 @@ var Acl = function (mongoose, usermodel) {
 		});
     };
 
-    Acl.prototype.LinkRoleUserById = function (roleId, userId, callback) {
+    AclMongoose.prototype.LinkRoleUserById = function (roleId, userId, callback) {
         var now = (new Date()).getTime();
 
         var userrole = new AclUserRole({
@@ -407,12 +393,12 @@ var Acl = function (mongoose, usermodel) {
 		});
     };
 
-    Acl.prototype.UnLinkRoleUser = function (roleId, userId, callback) {
+    AclMongoose.prototype.UnLinkRoleUser = function (roleId, userId, callback) {
 		AclUserRole.remove({ userId: userId, roleId: roleId });
 		callback();
     };
 
-    Acl.prototype.GetPermissionsForRole = function (name, callback) {
+    AclMongoose.prototype.GetPermissionsForRole = function (name, callback) {
 		Fiber(function() {
 			var outPermissions = [];
 			var Server = require('mongo-sync').Server;
@@ -438,7 +424,7 @@ var Acl = function (mongoose, usermodel) {
 		}).run();
     };
 
-    Acl.prototype.GetRolesForUser = function (name, identifier, callback) {
+    AclMongoose.prototype.GetRolesForUser = function (name, identifier, callback) {
 		Fiber(function() {
 			var outRoles = [];
 			var Server = require('mongo-sync').Server;
@@ -461,7 +447,7 @@ var Acl = function (mongoose, usermodel) {
 		}).run();
     };
 
-    return Acl;
+    return AclMongoose;
 };
 
 module.exports = Acl;

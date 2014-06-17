@@ -1,9 +1,29 @@
 #!/usr/bin/env node
+// node entry point
+var http = require('http');
+var https = require('https');
+var fs = require('fs');
+var path = require('path');
+
 var debug = require('debug')('hml');
 var app = require('../app');
 
-app.set('port', process.env.PORT || 3000);
+var privateKey = fs.readFileSync(path.join(__dirname, '..', 'ssl', 'localhost.key')).toString();
+var certRequest = fs.readFileSync(path.join(__dirname, '..', 'ssl', 'localhost.csr')).toString();
+var certificate = fs.readFileSync(path.join(__dirname, '..', 'ssl', 'localhost.crt')).toString();
 
-var server = app.listen(app.get('port'), function() {
-  debug('Express server listening on port ' + server.address().port);
+var credentials = {
+key: privateKey,
+ca: certRequest,
+cert: certificate
+};
+
+app.set('port-http', process.env.PORT || 3000);
+app.set('port-https', process.env.PORTSSL || 3443);
+
+var serverHttp = http.createServer(app).listen(app.get('port-http'), function () {
+debug('Express server listening on port ' + serverHttp.address().port);
+});
+var serverHttps = https.createServer(credentials, app).listen(app.get('port-https'), function () {
+debug('Express secure server listening on port ' + serverHttps.address().port);
 });

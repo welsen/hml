@@ -16,6 +16,7 @@ var UserSchema = require('./modules/schemas/UserSchema')(mongoose);
 var User = mongoose.model('User', UserSchema);
 
 var AclMongoose = require('./modules/classes/AclMongoose')(mongoose, User);
+var acl = new AclMongoose();
 
 var passport = require('passport');
 var PassportLocalStrategy = require('passport-local');

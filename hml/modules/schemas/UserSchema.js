@@ -1,4 +1,4 @@
-﻿var MD5 = require( 'crypto-js/md5' );
+var MD5 = require( 'crypto-js/md5' );
 var HMLError = require( '../classes/HMLError' );
 var EHMLError = require( '../enums/EHMLError' );
 
@@ -6,11 +6,11 @@ MD5.verify = function ( password, userPassword ) {
     return MD5( password ).toString() == userPassword || MD5( password ).toString() == MD5( userPassword ).toString();
 };
 
-var UserSchema = function ( mongoose ) {
+var UserSchema = function UserSchema( mongoose ) {
     var Schema = mongoose.Schema;
     // var ObjectId = Schema.ObjectId;
 
-    var userSchema = new Schema( {
+    var UserSchema = new Schema( {
         email: { type: String, unique: true },
         display: { type: String },
         fullname: { type: String },
@@ -22,7 +22,7 @@ var UserSchema = function ( mongoose ) {
         }
     });
 
-    userSchema.statics.authenticate = function ( email, password, callback ) {
+    UserSchema.statics.authenticate = function ( email, password, callback ) {
         this.findOne( { email: email }, function ( error, user ) {
             if ( user && MD5.verify( password, user.password ) ) {
                 callback( null, user );
@@ -43,7 +43,7 @@ var UserSchema = function ( mongoose ) {
         });
     };
 
-    return userSchema;
+    return UserSchema;
 };
 
 module.exports = UserSchema;

@@ -8,26 +8,10 @@ var Acl = function (mongoose, usermodel) {
 	var Schema = mongoose.Schema;
 	var ObjectId = Schema.ObjectId;
 
-	var AclRoleSchema = new Schema({
-		name: { type: String, unique: true },
-		description: String,
-		created: Number,
-		modified: Number,
-		deletable: Boolean,
-		active: Boolean
-	});
-	AclRoleSchema.plugin(tree);
+	var AclRoleSchema = require('../schemas/AclRoleSchema')(mongoose);
 	var AclRole = mongoose.model('AclRole', AclRoleSchema);
 
-	var AclPermissionSchema = new Schema({
-		name: { type: String, unique: true },
-		description: String,
-		created: Number,
-		modified: Number,
-		deletable: Boolean,
-		active: Boolean
-	});
-	AclPermissionSchema.plugin(tree);
+	var AclPermissionSchema = require('../schemas/AclPermissionSchema')(mongoose);
 	var AclPermission = mongoose.model('AclPermission', AclPermissionSchema);
 
 	var AclRolePermissionSchema = new Schema({

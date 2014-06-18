@@ -23,11 +23,12 @@ var Configure = function (app, session) {
 
 	app.use('/jquery', express.static(path.join(__dirname, '..', 'node_modules', 'jquery', 'dist')));
 	app.use('/enums', express.static(path.join(__dirname, 'enums')));
+	app.use('/classes', express.static(path.join(__dirname, 'classes')));
 
 	app.use(session({
 		secret: MD5("HML-2014/06/13").toString(),
 		store: new mongoStore({
-			db: "hml",
+			db: "hml"
 		})
 	}));
 };

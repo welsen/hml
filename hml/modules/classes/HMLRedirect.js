@@ -1,6 +1,12 @@
 var HMLRedirect = function HMLRedirect(redirect) {
 	this.__type = "HMLRedirect";
-	this.Redirect = redirect;
+	if (typeof redirect === "object") {
+		this.Redirect = redirect.Redirect;
+	} else {
+		this.Redirect = redirect;
+	}
 };
 
-module.exports = HMLRedirect;
+try {
+	module.exports = HMLRedirect;
+} catch(err) {}

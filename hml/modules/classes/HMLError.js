@@ -1,9 +1,18 @@
-var EHMLError = require('../enums/EHMLError');
+try {
+	var EHMLError = require('../enums/EHMLError');
+} catch (err) {}
 
 var HMLError = function HMLError(message, errorcode) {
 	this.__type = "HMLError";
-	this.ErrorCode = errorcode;
-	this.Message = message;
+	if (typeof message === "object") {
+		this.ErrorCode = message.ErrorCode;
+		this.Message = message.Message;
+	} else {
+		this.ErrorCode = errorcode;
+		this.Message = message;
+	}
 };
 
-module.exports = HMLError;
+try {
+	module.exports = HMLError;
+} catch(err) {}
